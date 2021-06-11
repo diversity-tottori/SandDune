@@ -1,255 +1,75 @@
-<html>
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>GeoAR.js demo</title>
-    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-</head>
+<!DOCTYPE HTML>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>Leaflet教材 - GeoJson Poygon1</title>
+    
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+    integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+    crossorigin=""></script>
+    
+    
+  </head>
+  <body>
 
-<body style='margin: 0; overflow: hidden;'>
 
-<a-scene 
-     embedded
-     loading-screen="enabled: false;"
-      arjs="sourceType: webcam; debugUIEnabled: false;">
-    
-<!-- マツ林のマツノマダラカミキリ -->
-<a-image
-    src="image/madara.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.53745636; longitude: 134.2113086;">
-</a-image>
-    
-<!-- オオヒョウタンゴミムシ -->
-<a-image
-    src="image/gomimusi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.54036362; longitude: 134.2104034;">
-</a-image>
-    
-<!-- ゾウムシ -->
-<a-image
-    src="image/zoumushi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.5410252; longitude: 134.210156;">
-</a-image>
-    
-<!-- ゴミムシダマシ -->
-<a-image
-    src="image/gomimushidamashi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.540925240033076; longitude: 134.21018221878185;">
-</a-image>
-    
-<!-- ニホントカゲ -->
-<a-image
-    src="image/tokage.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.54049891516633; longitude: 134.21027409903232;">
-</a-image>
-    
-<!-- アキグミ -->
-<a-image
-    src="image/akigumi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.5400892; longitude: 134.2107171;">
-</a-image>
-    
-<!-- アキグミ -->
-<a-image
-    src="image/akigumi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.53998592203753; longitude: 134.21082473473135;">
-</a-image>
-    
-<!-- アワフキ -->
-<a-image
-    src="image/awa.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.53868282761525; longitude: 134.2103920944234;">
-</a-image>
-    
-<!-- アワフキ -->
-<a-image
-    src="image/awa.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.53858240020563; longitude: 134.21030895147007;">
-</a-image>
-    
-<!-- アワフキ -->
-<a-image
-    src="image/awa.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.53834451052853; longitude: 134.21025602832614;">
-</a-image>
-    
-<!-- ヒメハマトビムシ -->
-<a-image
-    src="image/hamatobimushi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.541823965338125; longitude: 134.2099765577628;">
-</a-image>
-    
-<!-- センダン -->
-<a-image
-    src="image/nise.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.53733038381034; longitude: 134.2109837053422;">
-</a-image>
+<div id="mapid" style="height: 500px; width: 500px;"></div>
 
-<!-- ハリエンジュ -->
-<a-image
-    src="image/sendan.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.53739665753995; longitude: 134.21120318923192;">
-</a-image>
-    
-<!-- ハリエンジュ -->
-<a-image
-    src="image/sendan.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.53737868500852; longitude: 134.2109036420365;">
-</a-image>
-    
-<!-- ハマヒルガオ -->
-<a-image
-    src="image/hamahirugao.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.54183280045668; longitude: 134.21003033409656;">
-</a-image>
-    
-<!-- ハマゴウ -->
-<a-image
-    src="image/hamagou.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.54141758554325; longitude: 134.2101720978834;">
-</a-image>
-    
-<!-- ハマボウフウ -->
-<a-image
-    src="image/hamabouhuu.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.541752490255135; longitude: 134.21009423840135;">
-</a-image>
-    
-<!-- カワラヨモギ -->
-<a-image
-    src="image/yomogi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.54163643632102; longitude: 134.21012638778777;">
-</a-image>
-    
-<!-- ハマウツボ -->
-<a-image
-    src="image/hamautsubo.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.5417188898444; longitude: 134.21009770425323;">
-</a-image>
-    
-    
-<!-- 大学 -->
-<a-image
-    src="image/hamatobimushi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.514744759497304; longitude: 134.17172325207667;">
-</a-image>
-    
-<a-image
-    src="image/awa.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.514719425831885; longitude: 134.17157430277754;">
-</a-image>
-    
-<a-image
-    src="image/akigumi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.514768283609634; longitude: 134.17203004316372;">
-</a-image>
-    
-<a-image
-    src="image/tokage.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.51484971317318; longitude: 134.17213452998396;">
-</a-image>
-    
-<a-image
-    src="image/tokage.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.51487866588697; longitude: 134.172403527968;">
-</a-image>
-    
-<a-image
-    src="image/gomimushidamashi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.5149329521972; longitude: 134.17253469227427;">
-</a-image>
 
-<a-image
-    src="image/zoumushi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.51500533388707; longitude: 134.17264807158986;">
-</a-image>
-    
-<a-image
-    src="image/gomimusi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.51490942813569; longitude: 134.17277256653043;">
-</a-image>
-    
-<a-image
-    src="image/madara.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.51504333424988; longitude: 134.17291484645585;">
-</a-image>
-    
-<!-- 東 -->
-<a-image
-    src="image/yomogi.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.515117802718194; longitude: 134.21461591081604;">
-</a-image>
-    
-<!-- 北 -->
-<a-image
-    src="image/hamagou.png"
-    look-at="[gps-camera]"
-    scale="5 5 0"
-    gps-entity-place="latitude: 35.515360930508045; longitude: 134.214408017631;">
-</a-image>
-            
-<a-camera gps-camera="maxDistance:200" look-controls-enabled='false' arjs-look-controls='smoothingFactor: 0.1' gps-camera='gpsMinDistance: 5' rotation-reader></a-camera>
 
-</a-scene>
-</body>
+<script>
+  var mymap = L.map('mapid').setView([35.681, 139.765], 16);
+  L.tileLayer(
+    'http://{s}.tile.osm.org/{z}/{x}/{y}.png', 
+    {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+    }
+  ).addTo(mymap);
+  
+  
+  var myPolygons = {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "popupContent": "<p>三角形です。</p>"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [139.76718, 35.68078], 
+              [139.76461, 35.68364],
+              [139.76270, 35.68150]
+            ]
+          ]
+        }
+      }
+    ]
+  };
+  
+  L.geoJSON(myPolygons, 
+    {
+      onEachFeature: function onEachFeature(
+        feature,
+        layer
+      ){
+        if(feature.properties && feature.properties.popupContent){
+          layer.bindPopup(feature.properties.popupContent);
+        }
+      }
+    }
+  ).addTo(mymap);
+  
+  
+</script>
+
+
+  </body>
 </html>
