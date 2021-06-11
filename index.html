@@ -340,18 +340,106 @@ module.exports = L.Realtime;
     
     
     <script>
-var map = L.map('map'),
-    realtime = L.realtime('https://wanderdrone.appspot.com/', {
-        interval: 3 * 1000
-    }).addTo(map);
+var map = L.map('map').setView([48.517,18.255], 5);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+var shipLayer = L.layerGroup();
+var ships = L.icon({
+    iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Emoji_u1f6a2.svg/30px-Emoji_u1f6a2.svg.png',
+    iconSize: [30, 30]
+});
+
+var realtime = L.realtime(
+    /*
+    I'm providing a function to simulate a GeoJSON service,
+    instead of an URL
+    
+    {
+    url: 'jsonServlet/ships.json',
+    crossOrigin: true,
+    type: 'json' 
+    }*/
+  function(success, error){
+  	var ship = mockShip();
+  	success(ship);
+  }, {
+    interval: 5 * 1000,
+    getFeatureId: function(featureData){
+    	return featureData.properties.mmsi;
+    },
+    pointToLayer: function (feature, latlng) {
+      marker = L.marker(latlng, {icon: ships});
+      marker.bindPopup('mmsi: ' + feature.properties.mmsi +
+                       '<br/> course:' + feature.properties.hdg+
+                       '<br/> speed:' + feature.properties.sog);
+      marker.addTo(shipLayer);
+      return marker;
+    }
+    
+}).addTo(map);
+//controlLayers.addOverlay(geojson, 'Ships');
+
 realtime.on('update', function() {
-    map.fitBounds(realtime.getBounds(), {maxZoom: 3});
-});</script>
+    map.fitBounds(realtime.getBounds(), {maxZoom: 5});
+});
+
+function mockShip() {
+  return {
+    "type": "FeatureCollection",
+    "crs": {
+      "type": "name",
+      "properties": {
+        "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+    },
+    "features": [
+      {
+        "geometry": {
+          "coordinates": [
+            48.517+Math.sin((new Date).getTime())*2,
+            18.255
+          ],
+          "type": "Point"
+        },
+        "type": "Feature",
+        "properties": {
+          "geometry/coordinates/longitude": "48.517708",
+          "geometry/type": "Point",
+          "mmsi": "512131345",
+          "geometry/coordinates/latitude": "18.255447",
+          "hdg": "108",
+          "cog": "108",
+          "sog": "30.0",
+          "type": "Feature"
+        }
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            48.415,
+            18.151+Math.sin((new Date).getTime())*2
+          ],
+          "type": "Point"
+        },
+        "type": "Feature",
+        "properties": {
+          "geometry/coordinates/longitude": "48.417708",
+          "geometry/type": "Point",
+          "mmsi": "612131346",
+          "geometry/coordinates/latitude": "18.155447",
+          "hdg": "108",
+          "cog": "108",
+          "sog": "30.0",
+          "type": "Feature"
+        }
+      }
+    ]
+  };
+}
+    </script>
     
 </body>
 </html>
