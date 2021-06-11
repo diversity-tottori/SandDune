@@ -12,7 +12,7 @@ var map = L.map('map'),
     
     realtime = L.realtime(function(success, error) {
         L.Realtime.reqwest({
-            url: 'http://localhost:8080/api/status',
+            url: 'https://wanderdrone.appspot.com/',
             type: 'json'
         })
         .then(function(data) {
