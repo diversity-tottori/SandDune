@@ -67,6 +67,19 @@
     }
   ).addTo(mymap);
   
+
+    
+  realtime = L.realtime({
+        url: 'https://wanderdrone.appspot.com/',
+        crossOrigin: true,
+        type: 'json'
+    }, {
+        interval: 3 * 1000
+    }).addTo(mymap);
+
+   realtime.on('update', function() {
+    map.fitBounds(realtime.getBounds(), {maxZoom: 3});
+});
   
 </script>
 
