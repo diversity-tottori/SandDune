@@ -1,82 +1,64 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css"  data-require="leaflet@0.7.3" data-semver="0.7.3" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+<head>
+    <title>Leaflet Realtime - Earthquakes</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.6/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.6/dist/MarkerCluster.Default.css" />
+    <style>
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
     <div id="map"></div>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js" data-require="leaflet@0.7.3" data-semver="0.7.3"></script>
-    <script type="text/javascript" src="http://www.liedman.net/leaflet-realtime/dist/leaflet-realtime.js"></script>
-      
-    <script type="text/javascript">
-    var map = L.map('map', {
-  'center': [0, 0],
-  'zoom': 0,
-  'layers': [
-    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-      'attribution': 'Map data &copy; OpenStreetMap contributors'
-    })
-  ]
-});
 
-var geojsonMarkerOptions = {
-    radius: 18,
-    fillColor: "#ff7800",
-    color: "#000",
-    weight: 1,
-    opacity: 1,
-    fillOpacity: 0.8
-};
+    <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet-src.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.0.6/dist/leaflet.markercluster-src.js"></script>
+    <script src="https://unpkg.com/leaflet.featuregroup.subgroup"></script>
+    <script src="leaflet-realtime.js"></script>
+    <script>
+    function createRealtimeLayer(url, container) {
+    return L.realtime(url, {
+        interval: 60 * 1000,
+        getFeatureId: function(f) {
+            return f.properties.url;
+        },
+        cache: true,
+        container: container,
+        onEachFeature(f, l) {
+            l.bindPopup(function() {
+                return '<h3>' + f.properties.place + '</h3>' +
+                    '<p>' + new Date(f.properties.time) +
+                    '<br/>Magnitude: <strong>' + f.properties.mag + '</strong></p>' +
+                    '<p><a href="' + f.properties.url + '">More information</a></p>';
+            });
+        }
+    });
+}
 
-var realtime = L.realtime({
-    url: 'https://wanderdrone.appspot.com/',
-    crossOrigin: true,
-    type: 'json'
-}, {
-    interval: 3 * 1000,
-    pointToLayer: function (feature, latlng) {
-		return L.circleMarker(latlng, geojsonMarkerOptions)
-	}
-	/*
-    pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, {
-            'icon': L.icon({
-                iconUrl: '//leafletjs.com/docs/images/leaf-green.png',
-                shadowUrl: '//leafletjs.com/docs/images/leaf-shadow.png',
-                iconSize:     [38, 95], // size of the icon
-                shadowSize:   [50, 64], // size of the shadow
-                iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-                shadowAnchor: [4, 62],  // the same for the shadow
-                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-            })
-        });
-    }*/
+var map = L.map('map'),
+    clusterGroup = L.markerClusterGroup().addTo(map),
+    subgroup1 = L.featureGroup.subGroup(clusterGroup),
+    subgroup2 = L.featureGroup.subGroup(clusterGroup),
+    realtime1 = createRealtimeLayer('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson', subgroup1).addTo(map),
+    realtime2 = createRealtimeLayer('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson', subgroup2);
+
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php">USGS Earthquake Hazards Program</a>, &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-realtime.on('update', function(e) {
-    var coordPart = function(v, dirs) {
-            return dirs.charAt(v >= 0 ? 0 : 1) +
-                (Math.round(Math.abs(v) * 100) / 100).toString();
-        },
-        popupContent = function(fId) {
-            var feature = e.features[fId],
-                c = feature.geometry.coordinates;
-            return 'Wander drone at ' +
-                coordPart(c[1], 'NS') + ', ' + coordPart(c[0], 'EW');
-        },
-        bindFeaturePopup = function(fId) {
-            realtime.getLayer(fId).bindPopup(popupContent(fId));
-        },
-        updateFeaturePopup = function(fId) {
-            realtime.getLayer(fId).getPopup().setContent(popupContent(fId));
-        };
+L.control.layers(null, {
+    'Earthquakes 2.5+': realtime1,
+    'All Earthquakes': realtime2
+}).addTo(map);
 
-    map.fitBounds(realtime.getBounds(), {maxZoom: 3});
-
-    Object.keys(e.enter).forEach(bindFeaturePopup);
-    Object.keys(e.update).forEach(updateFeaturePopup);
-});
-      </script>
-  </body>
+realtime1.once('update', function() {
+    map.fitBounds(realtime1.getBounds(), {maxZoom: 3});
+});</script>
+</body>
 </html>
