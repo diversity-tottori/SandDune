@@ -1,31 +1,38 @@
-function createRealtimeLayer(url, container) {
-    return L.realtime(url, {
-        interval: 5 * 1000,
-        getFeatureId: function(f) {
-            return f.properties.id;
+var map = L.map('map'),
+    trail = {
+        type: 'Feature',
+        properties: {
+            id: 1
         },
-        cache: true,
-        container: container,
-        onEachFeature(f, l) {
-            date = f.properties.date;
-            l.bindPopup(date);
-            l.on("mouseover", function () {
-                l.openPopup();
-            });
-            l.on("mouseout", function () {
-                l.closePopup();
-            });
+        geometry: {
+            type: 'LineString',
+            coordinates: []
         }
-    });
-}
-    realtime1 = createRealtimeLayer('getPosition').addTo(map),
-    realtime2 = createRealtimeLayer('getUserPositionHistory').addTo(map);
+    },
+    
+    realtime = L.realtime(function(success, error) {
+        L.Realtime.reqwest({
+            url: 'http://localhost:8080/api/status',
+            type: 'json'
+        })
+        .then(function(data) {
+            var trailCoords = trail.geometry.coordinates;
+            trailCoords.push(data.geometry.coordinates);
+            trailCoords.splice(0, Math.max(0, trailCoords.length - 5));
+            success({
+                type: 'FeatureCollection',
+                features: [data, trail]
+            });
+        })
+        .catch(error);
+    }, {
+        interval: 3 * 1000
+    }).addTo(map);
 
-L.control.layers(null, {
-    'Current': realtime1,
-    'History': realtime2
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-realtime1.once('update', function() {
-    map.fitBounds(realtime1.getBounds(), {maxZoom: 18});
+realtime.on('update', function() {
+    map.fitBounds(realtime.getBounds(), {maxZoom: 3});
 });
